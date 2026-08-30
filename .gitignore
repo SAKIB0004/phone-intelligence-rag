@@ -1,1 +1,101 @@
 .env
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python build / packaging
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# =========================
+# Virtual Environment
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE / Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Testing / Coverage
+# =========================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# =========================
+# Linters / Formatters
+# =========================
+.ruff_cache/
+.mypy_cache/
+
+# =========================
+# Jupyter Notebook
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Local Database / Data
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Generated / Temporary Files
+# =========================
+*.tmp
+*.temp
+tmp/
+temp/
+
+# =========================
+# RAG / Vector Store
+# =========================
+chroma/
+chroma_db/
+vectorstore/
+.faiss/
+*.faiss
+*.pkl
+
+# =========================
+# Generated Embeddings
+# =========================
+embeddings/
