@@ -1,8 +1,10 @@
 from typing import Any, Dict, List, Optional
-from app.database.models import PhoneSpec
-from app.utils.logger import logger
+
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
+
+from app.database.models import PhoneSpec
+from app.utils.logger import logger
 
 
 def upsert_phone(db: Session, phone_data) -> PhoneSpec:

@@ -1,10 +1,11 @@
 from contextlib import contextmanager
-from typing import Generator
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 from app.config.settings import settings
 from app.database.models import Base
 from app.utils.logger import logger
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
 
 engine = create_engine(
     settings.DATABASE_URL,
@@ -13,10 +14,10 @@ engine = create_engine(
     max_overflow=10,
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False)
 
 
-def init_db() -> None:
+def init_db():
     """Create tables if they do not exist."""
     try:
         Base.metadata.create_all(bind=engine)
@@ -27,7 +28,7 @@ def init_db() -> None:
 
 
 @contextmanager
-def get_db() -> Generator[Session, None, None]:
+def get_db():
     """Context manager for safe database session lifecycles."""
     db = SessionLocal()
     try:

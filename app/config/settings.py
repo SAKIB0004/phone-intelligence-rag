@@ -15,6 +15,14 @@ class Settings(BaseSettings):
     BASE_URL: str = "https://www.gsmarena.com"
     SAMSUNG_PAGE_URL: str = "https://www.gsmarena.com/samsung-phones-9.php"
 
+
+    # Groq & RAG Settings
+    GROQ_API_KEY: str
+    GROQ_MODEL: str = "openai/gpt-oss-120b"
+    EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
+    CHROMA_PERSIST_DIR: str = "data/chroma_db"
+
+
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )

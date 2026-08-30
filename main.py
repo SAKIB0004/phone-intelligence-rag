@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from app.config.settings import settings
+
 from app.database.connection import get_db, init_db
 from app.database.crud import get_all_phones, upsert_phone
 from app.scraper.scraper import GSMArenaScraper
@@ -15,9 +15,7 @@ def run_pipeline():
 
     # 2. Discover device URLs
     scraper = GSMArenaScraper()
-    device_urls = scraper.get_target_device_urls(
-        limit=settings.TARGET_PHONE_COUNT
-    )
+    device_urls = scraper.get_target_device_urls()
 
     if not device_urls:
         logger.error("No device URLs found. Exiting pipeline.")

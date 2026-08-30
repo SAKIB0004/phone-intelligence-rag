@@ -1,5 +1,7 @@
 from typing import Any, Dict, List
+
 from bs4 import BeautifulSoup
+
 from app.scraper.cleaners import (
     clean_text,
     extract_battery_mah,

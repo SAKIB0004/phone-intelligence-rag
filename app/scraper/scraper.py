@@ -1,8 +1,9 @@
 import random
 import time
-from typing import Dict, List, Optional
+
 import requests
 from tenacity import retry, stop_after_attempt, wait_exponential
+
 from app.config.settings import settings
 from app.scraper.parser import GSMArenaParser
 from app.utils.logger import logger
@@ -21,7 +22,7 @@ class GSMArenaScraper:
             }
         )
 
-    def _respectful_sleep(self) -> None:
+    def _respectful_sleep(self):
         delay = random.uniform(
             settings.REQUEST_DELAY_MIN, settings.REQUEST_DELAY_MAX
         )
@@ -46,24 +47,50 @@ class GSMArenaScraper:
         response.raise_for_status()
         return response.text
 
-    def get_target_device_urls(
-        self, limit: int = settings.TARGET_PHONE_COUNT
-    ) -> List[str]:
-        """Fetch list of Samsung phone links from the brand catalog."""
-        catalog_html = self.fetch_page(settings.SAMSUNG_PAGE_URL)
-        device_links = GSMArenaParser.parse_device_links(
-            catalog_html, settings.BASE_URL
-        )
-        logger.info(
-            f"Found {len(device_links)} device URLs. Limiting to {limit}."
-        )
-        return device_links[:limit]
+    def get_target_device_urls(self):
+        """Return the explicitly selected Samsung smartphone URLs."""
 
-    def scrape_device(self, url: str) -> Optional[Dict]:
+        target_phone_urls = [
+            # Galaxy S Series
+            "https://www.gsmarena.com/samsung_galaxy_s21-10626.php",
+            "https://www.gsmarena.com/samsung_galaxy_s22-11253.php",
+            "https://www.gsmarena.com/samsung_galaxy_s23-12082.php",
+            "https://www.gsmarena.com/samsung_galaxy_s24-12773.php",
+            "https://www.gsmarena.com/samsung_galaxy_s25-12827.php",
+
+            # Galaxy S26 Series
+            "https://www.gsmarena.com/samsung_galaxy_s26_5g-14456.php",
+            "https://www.gsmarena.com/samsung_galaxy_s26+_5g-14457.php",
+            "https://www.gsmarena.com/samsung_galaxy_s26_ultra_5g-14320.php",
+
+            # Galaxy A Series
+            "https://www.gsmarena.com/samsung_galaxy_a27_5g-14606.php",
+            "https://www.gsmarena.com/samsung_galaxy_a37_5g-14378.php",
+            "https://www.gsmarena.com/samsung_galaxy_a57_5g-14379.php",
+
+            # Galaxy M Series
+            "https://www.gsmarena.com/samsung_galaxy_m17_5g-14221.php",
+            "https://www.gsmarena.com/samsung_galaxy_m47_5g-14749.php",
+
+            # Galaxy Z Series
+            "https://www.gsmarena.com/samsung_galaxy_z_flip8_5g-14803.php",
+            "https://www.gsmarena.com/samsung_galaxy_z_fold8_ultra_5g-14802.php",
+        ]
+
+        logger.info(
+            f"Selected {len(target_phone_urls)} target Samsung smartphones."
+        )
+
+        for index, url in enumerate(target_phone_urls, start=1):
+            logger.info(f"[{index}/{len(target_phone_urls)}] Target URL: {url}")
+
+        return target_phone_urls
+
+    def scrape_device(self, url: str):
         """Fetch and parse a single device page."""
         try:
             html = self.fetch_page(url)
             return GSMArenaParser.parse_phone_details(html, url)
-        except Exception as e:
+        except requests.RequestException as e:
             logger.error(f"Failed to scrape device at {url}: {e}")
             return None
