@@ -1,15 +1,14 @@
 import re
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 import chromadb
-from chromadb.utils import embedding_functions
-from sqlalchemy import or_
 
 from app.config.settings import settings
 from app.database.connection import get_db
 from app.database.crud import get_all_phones
 from app.database.models import PhoneSpec
+from app.rag.embeddings import create_embedding_function
 from app.utils.logger import logger
 
 
@@ -25,11 +24,7 @@ class SamsungRAGRetriever:
             path=settings.CHROMA_PERSIST_DIR
         )
 
-        self.embedding_fn = (
-            embedding_functions.SentenceTransformerEmbeddingFunction(
-                model_name=settings.EMBEDDING_MODEL
-            )
-        )
+        self.embedding_fn = create_embedding_function(settings.EMBEDDING_MODEL)
 
         self.collection = self.chroma_client.get_or_create_collection(
             name="samsung_phones",
@@ -195,26 +190,6 @@ class SamsungRAGRetriever:
 
         return len(records)
 
-    # ---------------------------------------------------------
-    # SINGLE PHONE RETRIEVAL
-    # ---------------------------------------------------------
-
-    def retrieve_phone(self, model_name: str) -> str:
-        """Retrieve one exact phone from PostgreSQL."""
-
-        with get_db() as db:
-            phone = self._find_phone(
-                db,
-                model_name,
-            )
-
-            if not phone:
-                return (
-                    f"No database record found for "
-                    f"{model_name}."
-                )
-
-            return self._phone_to_document(phone)
 
     # ---------------------------------------------------------
     # COMPARISON RETRIEVAL

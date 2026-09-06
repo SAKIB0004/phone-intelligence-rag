@@ -1,6 +1,7 @@
-from typing import Dict, Generator, List
+from typing import Generator
 
 from app.rag.groq_client import GroqLLMClient
+from app.rag.memory import ConversationMemory
 from app.rag.prompts import QA_PROMPT_TEMPLATE, SYSTEM_PROMPT
 from app.rag.retriever import SamsungRAGRetriever
 from app.utils.logger import logger
@@ -11,7 +12,7 @@ class SamsungChatEngine:
     def __init__(self):
         self.retriever = SamsungRAGRetriever()
         self.llm = GroqLLMClient()
-        self.history: List[Dict[str, str]] = []
+        self.memory = ConversationMemory()
         self._initialize_index()
 
     def _initialize_index(self):
@@ -24,7 +25,7 @@ class SamsungChatEngine:
 
     def reset_chat(self):
         """Reset conversation memory."""
-        self.history = []
+        self.memory.clear()
 
     def answer_query_stream(
         self, user_query: str
@@ -40,10 +41,7 @@ class SamsungChatEngine:
 
         # 3. Assemble chat payload with conversation memory
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-
-        # Append previous turns (keep last 6 turns for context budget)
-        for msg in self.history[-6:]:
-            messages.append(msg)
+        messages.extend(self.memory.recent_messages())
 
         messages.append({"role": "user", "content": formatted_user_prompt})
 
@@ -55,5 +53,4 @@ class SamsungChatEngine:
 
         # 5. Persist to conversational history
         complete_text = "".join(full_reply)
-        self.history.append({"role": "user", "content": user_query})
-        self.history.append({"role": "assistant", "content": complete_text})
+        self.memory.add_turn(user_query, complete_text)

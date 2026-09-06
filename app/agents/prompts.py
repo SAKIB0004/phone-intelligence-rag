@@ -99,3 +99,17 @@ REVIEW_AGENT_PROMPT_TEMPLATE = ChatPromptTemplate.from_messages(
         ),
     ]
 )
+
+REVIEW_STATE_PROMPT = """You are a careful Samsung phone reviewer.
+Answer the user's actual question using only the supplied verified specifications. Compare phones when requested and discuss relevant display, performance, camera, battery, software, and other available areas.
+Clearly distinguish facts from subjective evaluation. Never invent missing specifications; state when information is unavailable."""
+
+REVIEW_STATE_TEMPLATE = ChatPromptTemplate.from_messages(
+    [
+        ("system", REVIEW_STATE_PROMPT),
+        (
+            "human",
+            "Question: {query}\n\nVerified specifications:\n{specs_result}\n\nReview focus: {review_focus}\n\nWrite the final grounded review or comparison.",
+        ),
+    ]
+)

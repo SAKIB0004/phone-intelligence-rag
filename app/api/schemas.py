@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # --- Phone Schemas ---
@@ -33,8 +33,7 @@ class PhoneResponse(PhoneBase):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PhoneListResponse(BaseModel):
@@ -44,7 +43,11 @@ class PhoneListResponse(BaseModel):
 
 # --- RAG Chatbot Schemas ---
 class ChatRequest(BaseModel):
-    query: str = Field(..., min_length=2, example="What is the camera setup on the Galaxy S23 Ultra?")
+    query: str = Field(
+        ...,
+        min_length=2,
+        json_schema_extra={"example": "What is the camera setup on the Galaxy S23 Ultra?"},
+    )
     reset_history: bool = Field(default=False, description="Clear conversation memory before generating response")
 
 
@@ -55,15 +58,20 @@ class ChatResponse(BaseModel):
 
 # --- Multi-Agent Review Schemas ---
 class ReviewRequest(BaseModel):
-    phone_name: str = Field(..., min_length=2, example="Galaxy S24")
+    phone_name: Optional[str] = Field(
+        default=None,
+        min_length=2,
+        json_schema_extra={"example": "Galaxy S24"},
+    )
+    query: Optional[str] = Field(default=None, min_length=2)
     review_focus: str = Field(
         default="General Consumer & Performance Review",
-        example="Battery endurance and camera low-light performance",
+        json_schema_extra={"example": "Battery endurance and camera low-light performance"},
     )
 
 
 class ReviewResponse(BaseModel):
-    phone_name: str
+    phone_name: Optional[str] = None
     review_focus: str
     technical_dossier: str
     final_review: str

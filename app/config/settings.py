@@ -11,11 +11,6 @@ class Settings(BaseSettings):
     )
     REQUEST_DELAY_MIN: float = 2.0
     REQUEST_DELAY_MAX: float = 4.0
-    TARGET_PHONE_COUNT: int = 15
-    BASE_URL: str = "https://www.gsmarena.com"
-    SAMSUNG_PAGE_URL: str = "https://www.gsmarena.com/samsung-phones-9.php"
-
-
     # Groq & RAG Settings
     GROQ_API_KEY: str
     GROQ_MODEL: str = "openai/gpt-oss-120b"

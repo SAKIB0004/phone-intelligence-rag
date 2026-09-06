@@ -1,5 +1,3 @@
-from typing import Any, Dict, List, Optional
-
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
@@ -33,8 +31,3 @@ def upsert_phone(db: Session, phone_data) -> PhoneSpec:
 def get_all_phones(db: Session):
     return db.query(PhoneSpec).all()
 
-
-def get_phone_by_name(db: Session, model_name: str):
-    return (
-        db.query(PhoneSpec).filter(PhoneSpec.model_name == model_name).first()
-    )

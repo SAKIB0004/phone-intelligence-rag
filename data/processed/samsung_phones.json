@@ -19,7 +19,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 4000,
     "charging_speed": "25W wired, PD3.0 15W wireless (Qi) 4.5W reverse wireless",
-    "price": "$ 174.44 / \u20ac 199.00 / \u00a3 150.00",
+    "price": "$ 172.88 / \u20ac 218.00 / \u00a3 160.99",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
@@ -94,7 +94,7 @@
         "Models": "SM-G991B, SM-G991B/DS, SM-G991U, SM-G991U1, SM-G991W, SM-G991N, SM-G9910, SM-G991Q, SCG09",
         "SAR": "0.74 W/kg (head) 1.08 W/kg (body)",
         "SAR EU": "0.46 W/kg (head) 1.51 W/kg (body)",
-        "Price": "$ 174.44 / \u20ac 199.00 / \u00a3 150.00"
+        "Price": "$ 172.88 / \u20ac 218.00 / \u00a3 160.99"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 584055 (v8) GeekBench: 3238 (v5.1) GFXBench: 60fps (ES 3.1 onscreen)",
@@ -125,7 +125,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 3700,
     "charging_speed": "25W wired, PD3.0 15W wireless (Qi) 4.5W reverse wireless",
-    "price": "$ 193.88 / \u20ac 239.00 / \u00a3 193.93",
+    "price": "$ 193.44 / \u20ac 199.99 / \u00a3 179.00",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
@@ -200,7 +200,7 @@
         "Models": "SM-S901B, SM-S901B/DS, SM-S901U, SM-S901U1, SM-S901W, SM-S901N, SM-S9010, SM-S901E, SM-S901E/DS",
         "SAR": "1.03 W/kg (head) 1.15 W/kg (body)",
         "SAR EU": "1.21 W/kg (head) 1.59 W/kg (body)",
-        "Price": "$ 193.88 / \u20ac 239.00 / \u00a3 193.93"
+        "Price": "$ 193.44 / \u20ac 199.99 / \u00a3 179.00"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 745496 (v8), 881428 (v9) GeekBench: 3682 (v5.1) GFXBench: 69fps (ES 3.1 onscreen)",
@@ -231,7 +231,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 3900,
     "charging_speed": "25W wired, PD3.0, 50% in 30 min 15W wireless (Qi) 4.5W reverse wireless",
-    "price": "$ 259.99 / \u20ac 299.00 / \u00a3 239.99 / \u20b9 54,999",
+    "price": "$ 260.00 / \u20ac 339.00 / \u00a3 228.17 / \u20b9 54,999",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
@@ -306,7 +306,7 @@
         "Models": "SM-S911B, SM-S911B/DS, SM-S911U, SM-S911U1, SM-S911W, SM-S911N, SM-S9110, SM-S911E, SM-S911E/DS",
         "SAR": "0.95 W/kg (head) 0.88 W/kg (body)",
         "SAR EU": "0.96 W/kg (head) 1.30 W/kg (body)",
-        "Price": "$ 259.99 / \u20ac 299.00 / \u00a3 239.99 / \u20b9 54,999"
+        "Price": "$ 260.00 / \u20ac 339.00 / \u00a3 228.17 / \u20b9 54,999"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 1231075 (v9) GeekBench: 4950 (v5.1) GFXBench: 110fps (ES 3.1 onscreen)",
@@ -338,7 +338,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 4000,
     "charging_speed": "25W wired, PD3.0, 50% in 30 min 15W wireless (Qi) 4.5W reverse wireless",
-    "price": "$ 336.44 / \u20ac 395.57 / \u00a3 299.00 / \u20b9 54,499",
+    "price": "$ 335.44 / \u20ac 395.57 / \u00a3 299.00 / \u20b9 57,499",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
@@ -413,7 +413,7 @@
         "Models": "SM-S921B, SM-S921B/DS, SM-S921U, SM-S921U1, SM-S921W, SM-S921N, SM-S9210, SM-S921E, SM-S921E/DS",
         "SAR": "1.23 W/kg (head) 1.10 W/kg (body)",
         "SAR EU": "0.87 W/kg (head) 1.35 W/kg (body)",
-        "Price": "$ 336.44 / \u20ac 395.57 / \u00a3 299.00 / \u20b9 54,499"
+        "Price": "$ 335.44 / \u20ac 395.57 / \u00a3 299.00 / \u20b9 57,499"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 1218977 (v9), 1696727 (v10) GeekBench: 5833 (v5), 6747 (v6) 3DMark: 4183 (Wild Life Extreme)",
@@ -444,7 +444,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 5000,
     "charging_speed": "90W wired, PD3.0, QC4, 100% in 33 min 80W wireless, 100% in 46 min 10W reverse wireless",
-    "price": "\u20ac 769.00",
+    "price": "\u20ac 761.51",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
@@ -520,7 +520,7 @@
         "Models": "24031PN0DC, 24030PN60G",
         "SAR": "0.83 W/kg (head) 0.82 W/kg (body)",
         "SAR EU": "1.00 W/kg (head) 1.00 W/kg (body)",
-        "Price": "\u20ac 769.00"
+        "Price": "\u20ac 761.51"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 2014262 (v10) GeekBench: 7060 (v6) 3DMark: 4977 (Wild Life Extreme)",
@@ -550,7 +550,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 4300,
     "charging_speed": "25W wired, PD3.0, 55% in 30 min 15W wireless (Qi2 Ready) 4.5W reverse wireless",
-    "price": "$ 778.95 / \u20ac 629.00 / \u00a3 629.00 / \u20b9 76,900",
+    "price": "$ 721.00 / \u20ac 629.00 / \u00a3 655.00 / \u20b9 79,999",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
@@ -625,7 +625,7 @@
         "Models": "SM-S942B, SM-S942B/DS, SM-S942U, SM-S942U1, SM-S942W, SM-S942N, SM-S9420, SM-S942E, SM-S942E/DS",
         "SAR": "1.19 W/kg (head) 1.20 W/kg (body)",
         "SAR EU": "1.21 W/kg (head) 1.10 W/kg (body)",
-        "Price": "$ 778.95 / \u20ac 629.00 / \u00a3 629.00 / \u20b9 76,900"
+        "Price": "$ 721.00 / \u20ac 629.00 / \u00a3 655.00 / \u20b9 79,999"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 2441481 (v10), 3064672 (v11) GeekBench: 10824 (v6) 3DMark: 7230 (Wild Life Extreme)",
@@ -661,7 +661,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 4900,
     "charging_speed": "45W wired, PD3.0, 69% in 30 min 20W wireless (Qi2.2) 4.5W reverse wireless",
-    "price": "$ 790.00 / \u20ac 739.00 / \u00a3 775.00 / \u20b9 104,999",
+    "price": "$ 774.00 / \u20ac 739.00 / \u00a3 729.00 / \u20b9 108,499",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
@@ -736,7 +736,7 @@
         "Models": "SM-S947B, SM-S947B/DS, SM-S947U, SM-S947U1, SM-S947W, SM-S947N, SM-S9470, SM-S947E, SM-S947E/DS",
         "SAR": "1.15 W/kg (head) 1.17 W/kg (body)",
         "SAR EU": "0.78 W/kg (head) 1.22 W/kg (body)",
-        "Price": "$ 790.00 / \u20ac 739.00 / \u00a3 775.00 / \u20b9 104,999"
+        "Price": "$ 774.00 / \u20ac 739.00 / \u00a3 729.00 / \u20b9 108,499"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 2459298 (v10), 3142032 (v11) GeekBench: 10982 (v6) 3DMark: 7138 (Wild Life Extreme)",
@@ -772,7 +772,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 5000,
     "charging_speed": "60W wired, PD3.0, 75% in 30 min 25W wireless (Qi2.2) 4.5W reverse wireless",
-    "price": "$ 969.99 / \u20ac 929.00 / \u00a3 789.00 / \u20b9 118,000",
+    "price": "$ 949.99 / \u20ac 929.00 / \u00a3 783.89 / \u20b9 130,999",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / CDMA / HSPA / EVDO / LTE / 5G",
@@ -848,7 +848,7 @@
         "Models": "SM-S948B, SM-S948B/DS, SM-S948U, SM-S948U1, SM-S948W, SM-S948N, SM-S9480, SM-S948E, SM-S948E/DS",
         "SAR": "1.09 W/kg (head) 1.19 W/kg (body)",
         "SAR EU": "1.28 W/kg (head) 1.35 W/kg (body)",
-        "Price": "$ 969.99 / \u20ac 929.00 / \u00a3 789.00 / \u20b9 118,000"
+        "Price": "$ 949.99 / \u20ac 929.00 / \u00a3 783.89 / \u20b9 130,999"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 2627986 (v10), 3892165 (v11) GeekBench: 11566 (v6) 3DMark: 7744 (Wild Life Extreme)",
@@ -884,7 +884,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 5000,
     "charging_speed": "25W wired, 45% in 30 min",
-    "price": "\u20ac 231.00 / \u00a3 202.99 / \u20b9 29,990",
+    "price": "\u20ac 231.98 / \u00a3 195.45 / \u20b9 29,950",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / HSPA / LTE / 5G",
@@ -956,7 +956,7 @@
         "Models": "SM-A276E, SM-A276E/DS, SM-A276E/DSN, SM-A276B, SM-A276B/DS, SM-A276B/DSN, SM-A276U, SM-A276U1, SM-A276W",
         "SAR": "0.86 W/kg (head)",
         "SAR EU": "0.78 W/kg (head) 0.91 W/kg (body)",
-        "Price": "\u20ac 231.00 / \u00a3 202.99 / \u20b9 29,990"
+        "Price": "\u20ac 231.98 / \u00a3 195.45 / \u20b9 29,950"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 694659 (v10), 885852 (v11) GeekBench: 2973 (v6) 3DMark: 911 (Wild Life Extreme)",
@@ -992,7 +992,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 5000,
     "charging_speed": "45W wired",
-    "price": "$ 374.99 / \u20ac 248.00 / \u00a3 271.89 / \u20b9 38,999",
+    "price": "$ 374.99 / \u20ac 259.00 / \u00a3 267.00 / \u20b9 38,999",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / HSPA / LTE / 5G",
@@ -1064,7 +1064,7 @@
         "Models": "SM-A376E, SM-A376E/DS, SM-A376B, SM-A376B/DS, SM-A376U, SM-A376U1, SM-A376W, SM-A3760",
         "SAR": "0.81 W/kg (head) 1.17 W/kg (body)",
         "SAR EU": "0.72 W/kg (head) 1.14 W/kg (body)",
-        "Price": "$ 374.99 / \u20ac 248.00 / \u00a3 271.89 / \u20b9 38,999"
+        "Price": "$ 374.99 / \u20ac 259.00 / \u00a3 267.00 / \u20b9 38,999"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 697795 (v10), 912055 (v11) GeekBench: 3345 (v6) 3DMark: 1035 (Wild Life Extreme)",
@@ -1100,7 +1100,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 5000,
     "charging_speed": "45W wired",
-    "price": "$ 422.99 / \u20ac 319.00 / \u00a3 299.00 / \u20b9 49,990",
+    "price": "$ 424.99 / \u20ac 319.99 / \u00a3 279.98 / \u20b9 56,999",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / HSPA / LTE / 5G",
@@ -1171,7 +1171,7 @@
         "Models": "SM-A576B, SM-A576B/DS, SM-A576Q, SM-A576U1, SM-A576W, SM-A576Z, SM-A5760",
         "SAR": "0.85 W/kg (head) 1.20 W/kg (body)",
         "SAR EU": "0.70 W/kg (head) 1.07 W/kg (body)",
-        "Price": "$ 422.99 / \u20ac 319.00 / \u00a3 299.00 / \u20b9 49,990"
+        "Price": "$ 424.99 / \u20ac 319.99 / \u00a3 279.98 / \u20b9 56,999"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 1001995 (v10), 1363464 (v11) GeekBench: 4411 (v6) 3DMark: 1742 (Wild Life Extreme)",
@@ -1300,7 +1300,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 6000,
     "charging_speed": "45W wired Bypass charging",
-    "price": "\u20b9 25,999",
+    "price": "\u20b9 30,999",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / HSPA / LTE / 5G",
@@ -1372,7 +1372,7 @@
         "Models": "SM-M476B/DS, SM-M476B",
         "SAR": "0.87 W/kg (head)",
         "SAR EU": "0.50 W/kg (head) 0.98 W/kg (body)",
-        "Price": "\u20b9 25,999"
+        "Price": "\u20b9 30,999"
       }
     }
   },
@@ -1396,7 +1396,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 4300,
     "charging_speed": "25W wired, QC2.0, 55% in 30 min 15W wireless 4.5W reverse wireless",
-    "price": "$ 1,199.99 / \u20ac 819.99 / \u00a3 1,049.00 / \u20b9 119,999",
+    "price": "$ 1,049.99 / \u20ac 839.99 / \u00a3 1,049.00 / \u20b9 114,999",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / HSPA / LTE / 5G",
@@ -1472,7 +1472,7 @@
         "Models": "SM-F776B, SM-F776B/DS, SM-F776U, SM-F776U1",
         "SAR": "1.09 W/kg (head) 1.20 W/kg (body)",
         "SAR EU": "0.74 W/kg (head) 1.16 W/kg (body)",
-        "Price": "$ 1,199.99 / \u20ac 819.99 / \u00a3 1,049.00 / \u20b9 119,999"
+        "Price": "$ 1,049.99 / \u20ac 839.99 / \u00a3 1,049.00 / \u20b9 114,999"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 1821743 (v10), 2477554 (v11) GeekBench: 10466 (v6) 3DMark: 6916 (Wild Life Extreme)",
@@ -1508,7 +1508,7 @@
     "selfie_camera": null,
     "battery_capacity_mah": 5000,
     "charging_speed": "45W wired, PD3.0, QC2.0, 67% in 30 min 20W wireless (Qi2.2) 4.5W reverse wireless",
-    "price": "$ 2,099.99 / \u20ac 1,883.00 / \u00a3 1,899.00 / \u20b9 194,999",
+    "price": "$ 1,799.99 / \u20ac 1,844.00 / \u00a3 1,869.00 / \u20b9 184,999",
     "raw_specs": {
       "Network": {
         "Technology": "GSM / HSPA / LTE / 5G",
@@ -1584,7 +1584,7 @@
         "Models": "SM-F976B, SM-F976B/DS, SM-F976U, SM-F976U1",
         "SAR": "1.10 W/kg (head) 1.25 W/kg (body)",
         "SAR EU": "0.82 W/kg (head) 1.17 W/kg (body)",
-        "Price": "$ 2,099.99 / \u20ac 1,883.00 / \u00a3 1,899.00 / \u20b9 194,999"
+        "Price": "$ 1,799.99 / \u20ac 1,844.00 / \u00a3 1,869.00 / \u20b9 184,999"
       },
       "Our Tests": {
         "Performance": "AnTuTu: 2160310 (v10), 2970196 (v11) GeekBench: 11124 (v6) 3DMark: 6772 (Wild Life Extreme)",

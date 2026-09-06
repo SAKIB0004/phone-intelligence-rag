@@ -1,701 +1,370 @@
-# Samsung Mobile Intelligence & Multi-Agent Review System
+# Samsung Phone Query and Review System
 
-A full-stack, AI-powered Samsung smartphone intelligence platform that combines web scraping, structured relational storage, vector search, conversational RAG, multi-agent review generation, and REST APIs.
+An API service for collecting Samsung phone specifications from GSMArena, storing structured records in PostgreSQL, indexing those records in ChromaDB, answering specification questions with RAG, and generating grounded phone reviews with a LangGraph workflow.
 
-The system collects Samsung smartphone specifications from GSMArena, stores normalized data in PostgreSQL, creates a semantic vector index with ChromaDB, and uses Groq-hosted LLMs for conversational question answering and multi-agent technical review generation.
+## Objectives
 
----
+- Scrape Samsung phone specification pages from GSMArena.
+- Parse, clean, validate, and persist phone records in PostgreSQL.
+- Build a ChromaDB vector index from the validated PostgreSQL records.
+- Answer phone questions with retrieved database context and Groq.
+- Generate technical dossiers and reviews through a two-node LangGraph workflow.
+- Expose the functionality through a versioned FastAPI application.
 
-## System Architecture
+## Architecture
+
+### Scraping and indexing pipeline
 
 ```text
-                         +----------------------------------+
-                         |       GSMArena Web Scraper       |
-                         |  Requests + BeautifulSoup + LXML |
-                         |       Tenacity Retry Logic       |
-                         +----------------+-----------------+
-                                          |
-                                          v
-                         +----------------+-----------------+
-                         |       PostgreSQL Database        |
-                         |       SQLAlchemy ORM + CRUD      |
-                         |  Structured Specs + Raw JSON     |
-                         +-------------+--------------------+
-                                       |
-                       +---------------+----------------+
-                       |                                |
-                       v                                v
-          +-------------------------+       +-------------------------+
-          |       ChromaDB          |       |   LangChain DB Tools    |
-          |   Vector Search Layer   |       |   Exact SQL Lookup      |
-          | Sentence Transformers   |       |      ILIKE Search       |
-          +------------+------------+       +------------+------------+
-                       |                                 |
-                       v                                 v
-          +-------------------------+       +-------------------------+
-          | Conversational RAG      |       |   Multi-Agent System    |
-          | Groq LLM                |       |                         |
-          | Context Retrieval       |       | 1. Spec Retrieval      |
-          | Conversation Memory     |       | 2. Review Generation   |
-          | Token Streaming         |       | Sequential Workflow     |
-          +------------+------------+       +------------+------------+
-                       |                                 |
-                       +-----------------+---------------+
-                                         |
-                                         v
-                         +---------------+----------------+
-                         |          FastAPI API           |
-                         |                                |
-                         | Catalog | RAG | Agents | SSE  |
-                         | Swagger / OpenAPI / ReDoc      |
-                         +--------------------------------+
+GSMArena HTTP response
+        |
+        v
+HTML parser (app/scraper/parser.py)
+        |
+        v
+Cleaner (app/scraper/cleaners.py)
+        |
+        v
+Validator (app/scraper/validator.py)
+        |
+        v
+PostgreSQL
+        |
+        v
+ChromaDB vector index
 ```
 
----
+`app/scraper/pipeline.py` coordinates this flow. PostgreSQL is the source of structured phone records. The RAG retriever indexes those records and does not scrape independently.
+
+### RAG chat flow
+
+```text
+Chat request
+    |
+    v
+ChromaDB retriever + conversation memory
+    |
+    v
+Grounded prompt
+    |
+    v
+Groq streaming client
+    |
+    v
+Chat response
+```
+
+### Multi-agent review flow
+
+```text
+Review request
+    |
+    v
+Specification Agent
+    |
+    v
+Verified technical dossier
+    |
+    v
+Review Agent
+    |
+    v
+Final review
+```
+
+The workflow in `app/agents/workflow.py` is a compiled LangGraph:
+
+```text
+START -> specification_agent -> review_agent -> END
+```
+
+When `phone_name` is supplied, the Specification Agent directly uses the existing PostgreSQL-backed tool for that model. Requests without an explicit model can use the query-based tool-routing path.
 
 ## Key Features
 
-### 1. Resilient Web Scraping
+- GSMArena scraping with a persistent `requests.Session`.
+- Retry and exponential backoff through Tenacity.
+- Parsing with BeautifulSoup and LXML.
+- Text and numeric normalization for scraped records.
+- Validation of required fields, source URLs, and numeric ranges.
+- SQLAlchemy models and PostgreSQL upserts.
+- ChromaDB persistence with Sentence Transformer embeddings.
+- Semantic retrieval and a SQL-based highest-battery query.
+- Groq-powered streaming responses.
+- Bounded conversation memory with reset support.
+- LangChain tools for phone lookup and available-phone listing.
+- LangGraph specification-to-review orchestration.
+- FastAPI OpenAPI, Swagger UI, ReDoc, CORS, and health check support.
 
-- Extracts Samsung smartphone specifications from GSMArena.
-- Uses a persistent `requests.Session`.
-- Configurable request delays to reduce request pressure.
-- Exponential-backoff retries with `tenacity`.
-- Handles HTTP failures and rate limiting.
-- Parses and normalizes values such as:
-  - Battery capacity
-  - Display size
-  - Weight
-  - Chipset
-  - Camera specifications
-  - Charging speed
-  - Price
+## Technology Stack
 
-### 2. Dual Data Storage
+| Area | Technology |
+|---|---|
+| Language | Python 3.10+ |
+| API | FastAPI, Uvicorn |
+| HTTP scraping | Requests, Tenacity |
+| HTML parsing | BeautifulSoup4, LXML |
+| Structured database | PostgreSQL, SQLAlchemy, psycopg2-binary |
+| Vector database | ChromaDB |
+| Embeddings | ChromaDB Sentence Transformer embedding function |
+| LLM provider | Groq |
+| Agent tools/prompts | LangChain Core, LangChain Groq |
+| Agent orchestration | LangGraph |
+| Configuration | Pydantic Settings, python-dotenv |
+| Tests | Pytest, FastAPI TestClient, HTTPX |
 
-The project uses PostgreSQL and ChromaDB for different purposes.
+## Repository Structure
 
-#### PostgreSQL
-
-Stores authoritative structured records:
-
-- Device identity
-- Release information
-- Dimensions and weight
-- Display specifications
-- Operating system
-- Chipset, CPU, and GPU
-- RAM and storage
-- Camera specifications
-- Battery and charging
-- Price
-- Raw specification JSON
-- Timestamps
-
-#### ChromaDB
-
-Stores vector representations of phone specification profiles for semantic retrieval.
-
-This enables natural-language queries such as:
+Generated caches, virtual environments, Git metadata, and local vector/database artifacts are intentionally omitted from this tree.
 
 ```text
-Which phone has the best battery capacity?
-```
-
-or:
-
-```text
-Which Samsung phone is suitable for gaming?
-```
-
-### 3. Conversational RAG
-
-The RAG pipeline combines:
-
-- PostgreSQL structured data
-- ChromaDB semantic retrieval
-- Sentence-Transformer embeddings
-- Groq LLM inference
-- Multi-turn conversation memory
-- Streaming responses
-
-The system is instructed to answer from retrieved database context and avoid unsupported claims.
-
-### 4. Multi-Agent Review System
-
-The review workflow consists of two specialized agents:
-
-#### Spec Retrieval Agent
-
-Responsible for:
-
-- Identifying the requested phone
-- Calling database lookup tools
-- Retrieving exact specifications
-- Building a verified technical dossier
-
-#### Review Generation Agent
-
-Responsible for:
-
-- Consuming the technical dossier
-- Producing a balanced editorial review
-- Discussing strengths and weaknesses
-- Focusing on the requested review criteria
-- Streaming the generated review
-
-### 5. FastAPI REST Service
-
-Provides:
-
-- Phone catalog APIs
-- Individual specification lookup
-- Synchronous RAG responses
-- Streaming RAG responses
-- Multi-agent review generation
-- Streaming review generation
-- Swagger/OpenAPI documentation
-
----
-
-# Project Structure
-
-```text
-samsung-phone-scraper/
-│
+samsung-scraper/
 ├── app/
-│   │
-│   ├── scraper/
-│   │   ├── __init__.py
-│   │   ├── cleaners.py          # Value parsing and normalization
-│   │   ├── parser.py            # GSMArena HTML extraction
-│   │   └── scraper.py           # HTTP session and scraping logic
-│   │
-│   ├── database/
-│   │   ├── __init__.py
-│   │   ├── connection.py        # SQLAlchemy engine/session management
-│   │   ├── models.py            # SQLAlchemy ORM models
-│   │   └── crud.py              # Insert, update and query operations
-│   │
-│   ├── rag/
-│   │   ├── __init__.py
-│   │   ├── prompts.py           # RAG system prompts
-│   │   ├── retriever.py         # SQL + ChromaDB retrieval
-│   │   ├── groq_client.py       # Groq LLM client and streaming
-│   │   └── engine.py            # Conversational RAG manager
-│   │
+│   ├── __init__.py
 │   ├── agents/
 │   │   ├── __init__.py
-│   │   ├── prompts.py           # Agent prompts
-│   │   ├── tools.py             # LangChain database tools
-│   │   ├── spec_agent.py        # Technical specification agent
-│   │   ├── review_agent.py      # Editorial review agent
-│   │   └── workflow.py          # Multi-agent workflow orchestration
-│   │
+│   │   ├── prompts.py       # Agent prompts and review templates
+│   │   ├── review_agent.py  # Generates grounded reviews
+│   │   ├── spec_agent.py    # Retrieves verified phone specifications
+│   │   ├── state.py         # Shared LangGraph AgentState definition
+│   │   ├── tools.py         # PostgreSQL and retriever-backed tools
+│   │   └── workflow.py      # Compiled specification-to-review graph
 │   ├── api/
 │   │   ├── __init__.py
-│   │   ├── schemas.py           # Pydantic request/response schemas
-│   │   ├── dependencies.py      # FastAPI dependency injection
-│   │   └── routes/
+│   │   ├── dependencies.py  # Database and chat-engine dependencies
+│   │   ├── schemas.py       # Pydantic API request/response models
+│   │   └── v1/
 │   │       ├── __init__.py
-│   │       ├── phones.py        # Phone catalog endpoints
-│   │       ├── chat.py          # Conversational RAG endpoints
-│   │       └── agents.py        # Multi-agent review endpoints
-│   │
+│   │       └── routes/
+│   │           ├── __init__.py
+│   │           ├── agents.py # Multi-agent review endpoints
+│   │           ├── chat.py   # RAG chat endpoints
+│   │           ├── phones.py # Phone catalog endpoints
+│   │           └── scraper.py# Scraping pipeline endpoint
 │   ├── config/
 │   │   ├── __init__.py
-│   │   └── settings.py          # Application configuration
-│   │
+│   │   └── settings.py      # Environment-backed settings
+│   ├── database/
+│   │   ├── __init__.py
+│   │   ├── connection.py    # SQLAlchemy engine and sessions
+│   │   ├── crud.py          # Phone upsert and list operations
+│   │   └── models.py        # PhoneSpec ORM model
+│   ├── rag/
+│   │   ├── __init__.py
+│   │   ├── embeddings.py    # ChromaDB embedding factory
+│   │   ├── engine.py        # Conversational RAG orchestration
+│   │   ├── groq_client.py   # Groq completion streaming client
+│   │   ├── memory.py        # Conversation history
+│   │   ├── prompts.py       # RAG grounding prompts
+│   │   └── retriever.py     # PostgreSQL-to-Chroma indexing and retrieval
+│   ├── scraper/
+│   │   ├── __init__.py
+│   │   ├── cleaners.py      # Text and numeric normalization
+│   │   ├── parser.py        # GSMArena HTML extraction
+│   │   ├── pipeline.py      # Scrape, validate, store, and index flow
+│   │   ├── scraper.py       # HTTP fetching and target URLs
+│   │   └── validator.py     # Pre-persistence record validation
 │   └── utils/
 │       ├── __init__.py
-│       └── logger.py             # Logging configuration
-│
+│       └── logger.py        # Application logger
 ├── data/
-│   ├── raw/                      # Raw scraping cache
-│   ├── processed/                # Exported JSON snapshots
-│   └── chroma_db/                # Persistent ChromaDB storage
-│
+│   ├── chroma_db/           # Local ChromaDB persistence
+│   ├── processed/           # Generated processed JSON snapshots
+│   └── raw/                 # Reserved raw-data directory
 ├── tests/
 │   ├── __init__.py
-│   ├── test_scraper.py           # Scraper tests
-│   ├── test_parser.py            # Parser tests
-│   ├── test_database.py          # Database tests
-│   ├── test_rag.py               # RAG tests
-│   ├── test_agents.py             # Agent workflow tests
-│   └── test_api.py                # API integration tests
-│
-├── .env                          # Environment variables
+│   └── test_api.py          # FastAPI integration tests
+├── .env                     # Local environment variables; not committed
 ├── .gitignore
+├── LICENSE
+├── README.md
 ├── requirements.txt
-├── main.py                       # Scraper pipeline entry point
-├── chat.py                       # Interactive RAG CLI
-├── review_cli.py                 # Multi-agent review CLI
-├── server.py                     # FastAPI application entry point
-└── README.md
+└── run.py                   # FastAPI application and direct entry point
 ```
 
----
+## Installation
 
-# Technology Stack
+### Requirements
 
-| Layer | Technology |
-|---|---|
-| **Language** | Python 3.10+ |
-| **Web Scraping** | Requests, BeautifulSoup4, LXML, Tenacity |
-| **Relational Database** | PostgreSQL |
-| **ORM** | SQLAlchemy |
-| **Database Driver** | Psycopg2 |
-| **Vector Database** | ChromaDB |
-| **Embeddings** | Sentence-Transformers (`all-MiniLM-L6-v2`) |
-| **LLM Provider** | Groq API |
-| **LLM Model** | `llama-3.3-70b-versatile` |
-| **Agent Framework** | LangChain |
-| **API Framework** | FastAPI |
-| **Validation** | Pydantic v2 |
-| **ASGI Server** | Uvicorn |
-| **Testing** | Pytest, HTTPX |
+- Python 3.10 or newer.
+- PostgreSQL running locally or remotely.
+- A Groq API key.
+- Network access to GSMArena when running the scraper.
 
----
-
-# Installation & Setup
-
-## 1. Clone the Repository
-
-```bash
-git clone https://github.com/your-username/samsung-phone-scraper.git
-cd samsung-phone-scraper
-```
-
-## 2. Create a Virtual Environment
-
-### Windows
+Create and activate a virtual environment:
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
 ```
 
-### Linux / macOS
+Install the declared dependencies:
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
+```powershell
+python -m pip install -r requirements.txt
 ```
 
-## 3. Install Dependencies
+## Environment Configuration
 
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# Environment Configuration
-
-Create a `.env` file in the project root.
+Create `.env` in the project root. The application reads these values through `app/config/settings.py`.
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/samsung_db
-
-USER_AGENT=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36
-
+DATABASE_URL=postgresql://postgres:password@localhost:5432/samsung_db
+USER_AGENT=Mozilla/5.0
 REQUEST_DELAY_MIN=2.0
 REQUEST_DELAY_MAX=4.0
-TARGET_PHONE_COUNT=15
-
-GROQ_API_KEY=gsk_your_actual_groq_api_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
-
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=openai/gpt-oss-120b
 EMBEDDING_MODEL=all-MiniLM-L6-v2
 CHROMA_PERSIST_DIR=data/chroma_db
 ```
 
-> Never commit `.env` or API keys to GitHub. Add `.env` to `.gitignore`.
+Do not commit `.env` or expose `GROQ_API_KEY` in source control.
 
----
+## Database Setup
 
-# PostgreSQL Setup
-
-Make sure PostgreSQL is running.
-
-Create the database:
+Create the PostgreSQL database before starting the application:
 
 ```sql
 CREATE DATABASE samsung_db;
 ```
 
-The application will use the configured `DATABASE_URL` to connect to PostgreSQL.
+On startup, `run.py` calls `init_db()`, which creates the SQLAlchemy tables if they do not exist.
 
----
+The `samsung_phones` table is represented by `app.database.models.PhoneSpec` and stores:
 
-# Usage
+- Model identity and source URL.
+- Release date, dimensions, weight, and display data.
+- Operating system, chipset, CPU, GPU, and storage/RAM.
+- Main and selfie camera fields.
+- Battery capacity, charging speed, and price.
+- Raw parsed specifications as JSON.
+- Creation and update timestamps.
 
-## Step 1 — Scrape Samsung Phone Specifications
+## Running the Application
 
-Run:
+Start directly with Python:
 
-```bash
-python main.py
+```powershell
+python run.py
 ```
 
-The scraper will:
+Or start Uvicorn with reload enabled:
 
-1. Discover or use the configured target phone URLs.
-2. Fetch GSMArena pages.
-3. Parse phone specifications.
-4. Clean and normalize extracted values.
-5. Upsert records into PostgreSQL.
-6. Export the processed dataset to:
+```powershell
+python -m uvicorn run:app --reload
+```
+
+The service listens on `http://127.0.0.1:8000` by default.
+
+Interactive API documentation:
+
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- ReDoc: `http://127.0.0.1:8000/redoc`
+
+## API Reference
+
+All business routes are registered under `/api/v1`.
+
+### Health
 
 ```text
-data/processed/samsung_phones.json
+GET /health
 ```
 
----
+Checks database connectivity and returns the number of stored phones.
 
-## Step 2 — Run the Conversational RAG Chatbot
+### Phone catalog
 
-Start the CLI:
-
-```bash
-python chat.py
+```text
+GET /api/v1/phones/
+GET /api/v1/phones/{model_name}
 ```
+
+The list endpoint accepts `skip` and `limit` query parameters. The model endpoint performs a case-insensitive partial match.
 
 Example:
 
-```text
-You: What are the camera specifications of the Galaxy S23?
-
-Assistant:
-...
+```powershell
+curl "http://127.0.0.1:8000/api/v1/phones/?limit=5"
+curl "http://127.0.0.1:8000/api/v1/phones/Galaxy%20S24"
 ```
 
-Other example queries:
+### RAG chat
 
 ```text
-What is the screen size of the Galaxy S22?
-
-Which Samsung phone has the highest battery capacity?
-
-Compare the Galaxy S23 and Galaxy S22 in terms of performance.
-
-What chipset does the Galaxy S24 use?
-
-Which phone has the fastest charging?
+POST /api/v1/chat/query
+POST /api/v1/chat/stream
 ```
 
-Available CLI commands:
+Request body:
+
+```json
+{
+  "query": "What is the chipset in the Galaxy S24?",
+  "reset_history": false
+}
+```
+
+`/query` returns JSON. `/stream` returns a plain-text token stream. Set `reset_history` to `true` to clear the singleton chat engine's conversation memory before answering.
+
+### Multi-agent review
 
 ```text
-exit
-quit
-clear
+POST /api/v1/agents/review
+POST /api/v1/agents/review/stream
 ```
 
-`clear` resets the conversation memory.
+Explicit phone review:
 
----
-
-# Step 3 — Run the Multi-Agent Review System
-
-Start:
-
-```bash
-python review_cli.py
+```json
+{
+  "phone_name": "Galaxy S24",
+  "review_focus": "General Consumer & Performance Review"
+}
 ```
 
-The workflow is:
+The response contains `technical_dossier` and `final_review`. A request may alternatively provide `query` for the specification agent to interpret:
+
+```json
+{
+  "query": "Compare Galaxy S24 and Galaxy S23 performance",
+  "review_focus": "Performance and battery"
+}
+```
+
+### Scraper
 
 ```text
-User Request
-     |
-     v
-Spec Retrieval Agent
-     |
-     v
-Database Tool Calling
-     |
-     v
-Verified Technical Dossier
-     |
-     v
-Review Generation Agent
-     |
-     v
-Editorial Review
+POST /api/v1/scraper/run
 ```
 
-Example review request:
+This triggers the existing scrape pipeline. Each scraped record is parsed, cleaned, validated, upserted into PostgreSQL, included in `data/processed/samsung_phones.json`, and then indexed into ChromaDB from PostgreSQL.
 
-```text
-Phone:
-Galaxy S24
+## RAG and Agent Details
 
-Focus:
-Compact ergonomics, battery endurance, and thermal behavior
+The retriever creates a ChromaDB collection named `samsung_phones`. It converts PostgreSQL `PhoneSpec` rows into searchable specification documents and supports:
+
+- Semantic ChromaDB retrieval for natural-language questions.
+- Structured PostgreSQL matching for phone-name lookups.
+- SQL ranking for best/highest/longest battery queries.
+- Comparison retrieval for multiple phone names.
+
+The chat engine adds retrieved context to a grounding prompt, includes recent conversation messages, and streams the Groq response. The agent tools use the existing database session and retriever rather than creating a second database or vector implementation.
+
+## Testing
+
+Run the available test suite from the repository root:
+
+```powershell
+pytest -q
 ```
 
----
+The repository currently contains API integration coverage in `tests/test_api.py`. No `pyproject.toml`, Makefile, Dockerfile, or dedicated lint/format configuration is present, so no additional project-defined lint or formatting command is documented.
 
-# Step 4 — Run the FastAPI Server
+## Data and Generated Files
 
-Start the server:
-
-```bash
-python server.py
-```
-
-Or:
-
-```bash
-uvicorn server:app --host 0.0.0.0 --port 8000 --reload
-```
-
-The API will be available at:
-
-```text
-http://localhost:8000
-```
-
-### API Documentation
-
-Swagger UI:
-
-```text
-http://localhost:8000/docs
-```
-
-ReDoc:
-
-```text
-http://localhost:8000/redoc
-```
-
-Health check:
-
-```text
-http://localhost:8000/health
-```
-
----
-
-# API Reference
-
-## Phone Catalog
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/v1/phones/` | Return stored Samsung phones |
-| `GET` | `/api/v1/phones/{model_name}` | Return complete specifications for a phone |
-
----
-
-## Conversational RAG
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/v1/chat/query` | Return a complete RAG response |
-| `POST` | `/api/v1/chat/stream` | Stream the RAG response using SSE |
-
-### Example Request
-
-```bash
-curl -X POST "http://localhost:8000/api/v1/chat/query" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "query": "What is the charging speed of the Galaxy S24 Ultra?",
-       "reset_history": false
-     }'
-```
-
----
-
-# Multi-Agent Review API
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/v1/agents/review` | Generate technical dossier and editorial review |
-| `POST` | `/api/v1/agents/review/stream` | Stream the generated review |
-
-### Example Request
-
-```bash
-curl -X POST "http://localhost:8000/api/v1/agents/review" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "phone_name": "Galaxy S24",
-       "review_focus": "Compact ergonomics, battery endurance, and thermal behavior"
-     }'
-```
-
----
-
-# Data Flow
-
-The complete application pipeline is:
-
-```text
-                    GSMArena
-                       |
-                       v
-                Web Scraper
-                       |
-                       v
-             HTML Parser/Cleaner
-                       |
-                       v
-                 PostgreSQL
-                       |
-          +------------+------------+
-          |                         |
-          v                         v
-      ChromaDB                LangChain Tools
-          |                         |
-          v                         v
-   Semantic Retrieval        Exact SQL Lookup
-          |                         |
-          +------------+------------+
-                       |
-             +---------+---------+
-             |                   |
-             v                   v
-        RAG Engine          Spec Agent
-             |                   |
-             |                   v
-             |             Technical Dossier
-             |                   |
-             |                   v
-             |             Review Agent
-             |                   |
-             +---------+---------+
-                       |
-                       v
-                  FastAPI API
-                       |
-                       v
-                  User / Client
-```
-
----
-
-# Retrieval Strategy
-
-The system uses different retrieval strategies depending on the query.
-
-### Exact / Entity-Based Queries
-
-Database lookup can retrieve a specific phone using SQLAlchemy statements and case-insensitive matching.
-
-Example:
-
-```text
-What is the screen size of the Galaxy S22?
-```
-
-The system can perform an exact database lookup instead of relying only on vector similarity.
-
-### Semantic Queries
-
-ChromaDB is used when the question requires semantic matching.
-
-Example:
-
-```text
-Which Samsung phone is suitable for long battery usage?
-```
-
-### Ranking Queries
-
-Structured SQL queries are preferred for numerical ranking operations.
-
-Example:
-
-```text
-Which Samsung phone has the highest battery capacity?
-```
-
-This avoids relying on vector similarity for numerical comparisons.
-
----
-
-# Testing
-
-Run the complete test suite:
-
-```bash
-pytest
-```
-
-Verbose mode:
-
-```bash
-pytest -v -s
-```
-
-Run individual test modules:
-
-```bash
-pytest tests/test_scraper.py
-pytest tests/test_parser.py
-pytest tests/test_database.py
-pytest tests/test_rag.py
-pytest tests/test_agents.py
-pytest tests/test_api.py
-```
-
-From the project root, you can also run a test module directly:
-
-```bash
-python -m tests.test_agents
-```
-
----
-
-# Design Principles
-
-The project follows several important principles:
-
-- **Database-first factual retrieval:** structured specifications should come from PostgreSQL whenever exact values are required.
-- **Vector search for semantic relevance:** ChromaDB is used to identify relevant documents, not as the source of truth for numerical operations.
-- **Agent specialization:** each agent has a focused responsibility.
-- **No unsupported claims:** the LLM should acknowledge missing information instead of inventing specifications.
-- **Session-safe database access:** SQLAlchemy ORM objects are accessed while their database session is active.
-- **Modern SQLAlchemy style:** use `select()` statements with `Session.execute()` for database queries.
-- **Streaming support:** long LLM responses can be streamed through CLI and SSE API interfaces.
-- **Separation of concerns:** scraping, storage, retrieval, agents, and API layers remain independently testable.
-
----
-
-# Project Goals
-
-The project demonstrates an end-to-end production-oriented AI application combining:
-
-```text
-Web Scraping
-     +
-Data Cleaning
-     +
-PostgreSQL
-     +
-Vector Search
-     +
-RAG
-     +
-LLM Tool Calling
-     +
-Multi-Agent Architecture
-     +
-FastAPI
-     +
-Streaming
-     +
-Automated Testing
-```
-
-It can serve as a foundation for a larger Samsung product intelligence platform with additional models, pricing sources, benchmark data, recommendation systems, and production deployment.
-
----
-
-# License
-
-This project is licensed under the MIT License.
+- `data/processed/samsung_phones.json` is generated by the scraper pipeline.
+- `data/chroma_db/` contains persistent local ChromaDB state.
+- `data/raw/` is available for raw scrape data but is not populated by the current pipeline.
+- `.env`, caches, virtual environments, and local database/vector artifacts should remain uncommitted.
